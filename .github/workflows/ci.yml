@@ -25,7 +25,7 @@ jobs:
         run: npm run build
       - name: Deploy to staging
         if: github.event_name == 'push'
-        run: npx surge --project ./build --domain silent-apparatus.surge.sh
+        run: npx surge --project ./build --domain thinkable-butter.surge.sh
         env:
           SURGE_LOGIN: ${{secrets.SURGE_LOGIN}}
           SURGE_TOKEN: ${{secrets.SURGE_TOKEN}}
