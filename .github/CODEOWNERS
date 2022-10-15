@@ -1,0 +1,4 @@
+* @deluxanMD
+*.js @deluxanMD
+*.yml @deluxanMD
+/public/ @deluxanMD
