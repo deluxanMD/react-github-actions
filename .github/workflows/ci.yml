@@ -7,6 +7,12 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    env:
+      CI: true
+      BUCKET: reactgithubactions
+      DIST: build
+      REGION: us-east-1
+      DIST_ID: EUW3CVJDSAAF3
     permissions:
       id-token: write
       contents: read
