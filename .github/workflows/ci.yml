@@ -53,4 +53,4 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Deploy content to S3 bucket
-        run: aws s3 sync --delete ${{env.DIST}} s3://${{env.BUCKET}}
+        run: aws s3 sync --delete ${{env.DIST}}/ s3://${{env.BUCKET}}
