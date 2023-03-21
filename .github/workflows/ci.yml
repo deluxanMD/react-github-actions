@@ -5,10 +5,10 @@ on:
     branches: [develop]
 
 jobs:
-  build:
+  setup:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Use nodeJS
         uses: actions/setup-node@v1
@@ -24,20 +24,24 @@ jobs:
           REGION: us-east-1
           DIST_ID: EUW3CVJDSAAF3
 
-      - name: Build Project
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build the project
         if: github.event_name == 'push'
         run: npm run build
 
-      - name: Upload to s3
-        uses: aws-actions/configure-aws-credentials@v1
+  deploy:
+    name: Upload to Amazon S3
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
-          aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-          aws-region: ${{env.REGION}}
-      - run: aws s3 sync --delete ${{env.DIST}} s3://${{env.BUCKET}}
-
-      - name: Upload to cloudfront
-        run: |
-          aws cloudfront create-invalidation \
-            --distribution-id ${{env.DIST_ID}} \
-            --paths "/*"
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: arn:aws:iam::376117308594:user/admin
+          aws-region: us-east-1
