@@ -5,8 +5,11 @@ on:
     branches: [develop]
 
 jobs:
-  setup:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v3
 
@@ -17,31 +20,6 @@ jobs:
       - run: npm ci
       - run: npm run format:check
       - run: npm test -- --coverage
-        env:
-          CI: true
-          BUCKET: reactgithubactions
-          DIST: build
-          REGION: us-east-1
-          DIST_ID: EUW3CVJDSAAF3
-
-  build-and-deploy:
-    needs: setup
-    name: Upload to Amazon S3
-    runs-on: ubuntu-latest
-    env:
-      CI: true
-      BUCKET: reactgithubactions
-      DIST: build
-      REGION: us-east-1
-      DIST_ID: EUW3CVJDSAAF3
-    permissions:
-      id-token: write
-      contents: read
-    steps:
-      - name: Use nodeJS
-        uses: actions/setup-node@v1
-        with:
-          node-version: "16.x"
       - name: Build the project
         run: npm run build
       - name: Configure AWS credentials
