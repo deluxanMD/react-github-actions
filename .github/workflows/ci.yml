@@ -36,6 +36,12 @@ jobs:
     needs: build
     name: Upload to Amazon S3
     runs-on: ubuntu-latest
+    env:
+      CI: true
+      BUCKET: reactgithubactions
+      DIST: build
+      REGION: us-east-1
+      DIST_ID: EUW3CVJDSAAF3
     permissions:
       id-token: write
       contents: read
@@ -46,3 +52,5 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+      - name: Deploy content to S3 bucket
+        run: aws s3 sync --delete ${{env.DIST}} s3://${{env.BUCKET}}
