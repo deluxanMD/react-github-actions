@@ -38,6 +38,10 @@ jobs:
       id-token: write
       contents: read
     steps:
+      - name: Use nodeJS
+        uses: actions/setup-node@v1
+        with:
+          node-version: "16.x"
       - name: Build the project
         run: npm run build
       - name: Configure AWS credentials
