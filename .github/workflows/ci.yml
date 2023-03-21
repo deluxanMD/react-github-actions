@@ -25,6 +25,7 @@ jobs:
           DIST_ID: EUW3CVJDSAAF3
 
   build:
+    needs: setup
     runs-on: ubuntu-latest
     steps:
       - name: Build the project
@@ -32,6 +33,7 @@ jobs:
         run: npm run build
 
   deploy:
+    needs: build
     name: Upload to Amazon S3
     runs-on: ubuntu-latest
     permissions:
