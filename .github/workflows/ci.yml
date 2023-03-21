@@ -39,7 +39,6 @@ jobs:
       contents: read
     steps:
       - name: Build the project
-        if: github.event_name == 'push'
         run: npm run build
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
