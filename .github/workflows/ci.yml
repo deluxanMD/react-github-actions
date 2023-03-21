@@ -5,10 +5,20 @@ on:
     branches: [develop]
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    env:
+      CI: true
+      BUCKET: reactgithubactions
+      DIST: build
+      REGION: us-east-1
+      DIST_ID: EUW3CVJDSAAF3
+    permissions:
+      id-token: write
+      contents: read
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+
       - name: Use nodeJS
         uses: actions/setup-node@v1
         with:
@@ -16,5 +26,15 @@ jobs:
       - run: npm ci
       - run: npm run format:check
       - run: npm test -- --coverage
-        env:
-          CI: true
+      - name: Build the project
+        run: npm run build
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Deploy content to S3 bucket
+        run: aws s3 sync ${{env.DIST}} s3://${{env.BUCKET}}
+      - name: Deploy to cloudfront
+        run: aws cloudfront create-invalidation --distribution-id ${{env.DIST_ID}} --paths "/*"
